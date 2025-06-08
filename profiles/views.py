@@ -1,18 +1,45 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+from profiles import serializers
 
-# Create your views here.
 class HelloAPIView(APIView):
     """Test API View"""
-    def get(self,request,format=None):
+
+    serializer_class = serializers.HelloSerializer
+
+    def get(self, request, format=None):
         """Return list of APIView features"""
-
-        an_apiview=[
-        'Uses HTTP method as funcation (get,post,patch,put,delete)',
-        'Is similiar to a traditional Django View',
-        'Gives you the most control over the application logic',
-        'Is mapped manually to URLs',
-
+        an_apiview = [
+            'Uses HTTP methods as function (get, post, patch, put, delete)',
+            'Is similar to a traditional Django View',
+            'Gives you the most control over the application logic',
+            'Is mapped manually to URLs',
         ]
-        return Response({'message':'Hello','an_apiview':an_apiview})
+        return Response({'message': 'Hello', 'an_apiview': an_apiview})
+
+    def post(self, request):
+        """Create a hello message with our name"""
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}'
+            return Response({'message': message})
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def put(self, request, pk=None):
+        """Handle updating an object (full update)"""
+        return Response({'method': 'PUT', 'message': 'This would update an object completely.'})
+
+    def patch(self, request, pk=None):
+        """Handle partial update of an object"""
+        return Response({'method': 'PATCH', 'message': 'This would update part of the object.'})
+
+    def delete(self, request, pk=None):
+        """Delete an object"""
+        return Response({'method': 'DELETE', 'message': 'This would delete an object.'})
