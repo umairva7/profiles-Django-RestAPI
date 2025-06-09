@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,viewsets
 from profiles import serializers
 
 class HelloAPIView(APIView):
@@ -43,3 +43,37 @@ class HelloAPIView(APIView):
     def delete(self, request, pk=None):
         """Delete an object"""
         return Response({'method': 'DELETE', 'message': 'This would delete an object.'})
+
+
+class HelloViewSet(viewsets.ViewSet):
+    """Test API ViewSet"""
+
+    def list(self, request):
+        """Return a hello message"""
+        a_viewset = [
+            "Uses actions like list, create, retrieve, update, partial_update",
+            "Automatically maps to URLs using routers",
+            "Provides more functionality with less code",
+        ]
+
+        return Response({'message': 'Hello!', 'a_viewset': a_viewset})
+
+    def create(self, request):
+        """Create a new hello message"""
+        return Response({'method': 'POST', 'message': 'Hello from create method!'})
+
+    def retrieve(self, request, pk=None):
+        """Handle getting a single object by its ID"""
+        return Response({'method': 'GET', 'message': f'Retrieve object {pk}'})
+
+    def update(self, request, pk=None):
+        """Handle updating an object"""
+        return Response({'method': 'PUT', 'message': f'Update object {pk}'})
+
+    def partial_update(self, request, pk=None):
+        """Handle partial update of an object"""
+        return Response({'method': 'PATCH', 'message': f'Partial update object {pk}'})
+
+    def destroy(self, request, pk=None):
+        """Delete an object"""
+        return Response({'method': 'DELETE', 'message': f'Delete object {pk}'})
