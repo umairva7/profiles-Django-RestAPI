@@ -2,7 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status,viewsets
-from profiles import serializers
+from profiles import serializers, models
+from rest_framework.authentication import TokenAuthentication
+from profiles import permissions
 
 class HelloAPIView(APIView):
     """Test API View"""
@@ -77,3 +79,11 @@ class HelloViewSet(viewsets.ViewSet):
     def destroy(self, request, pk=None):
         """Delete an object"""
         return Response({'method': 'DELETE', 'message': f'Delete object {pk}'})
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.UpdateOwnProfile,)
